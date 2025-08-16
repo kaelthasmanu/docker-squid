@@ -9,5 +9,5 @@ services:
     volumes:
       - ./squid_logs:/var/log/squid        # añade :Z si usas SELinux
       - ./squid_cache:/var/spool/squid     # opcional: persistir caché
-      - /home/manuel/Desktop/squid.conf:/etc/squid/squid.conf
+      - ./squid.conf:/etc/squid/squid.conf
     restart: unless-stopped
