@@ -11,3 +11,10 @@ services:
       - ./squid_cache:/var/spool/squid     # opcional: persistir caché
       - ./squid.conf:/etc/squid/squid.conf
     restart: unless-stopped
+
+  #php-app:
+    #image: my-php-app
+    #container_name: php_app
+    #ports:
+      #- "80:80"
+    #restart: unless-stopped
