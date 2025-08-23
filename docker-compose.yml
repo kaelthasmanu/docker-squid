@@ -12,9 +12,9 @@ services:
       - ./squid.conf:/etc/squid/squid.conf
     restart: unless-stopped
 
-  #php-app:
-    #image: my-php-app
-    #container_name: php_app
-    #ports:
-      #- "80:80"
-    #restart: unless-stopped
+  php-app:
+    build: ./sqstats
+    container_name: php_app
+    ports:
+      - "80:80"
+    restart: unless-stopped
