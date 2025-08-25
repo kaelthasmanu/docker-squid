@@ -2,7 +2,12 @@ version: '3.8'
 
 services:
   squid:
-    build: .
+    build:
+      context: .
+      # You can pass build args here to change the squid package version and distro
+      # args:
+      #   SQUID_VERSION: "7.1"
+      #   DISTRO: "jammy"
     container_name: squid_proxy
     ports:
       - "3128:3128"

@@ -1,12 +1,28 @@
 FROM ubuntu:22.04
 
-# Instalar dependencias y Squid
-RUN apt-get update && \
-    apt-get install -y wget curl ca-certificates && \
-    wget https://github.com/cuza/squid/releases/download/7.1/squid_7.1-ubuntu-jammy_amd64.deb && \
-    dpkg -i squid_7.1-ubuntu-jammy_amd64.deb || apt-get install -f -y && \
-    dpkg -i squid_7.1-ubuntu-jammy_amd64.deb && \
-    rm -f squid_7.1-ubuntu-jammy_amd64.deb
+# Build args to make squid version and distro dynamic
+ARG SQUID_VERSION=7.1
+ARG DISTRO=jammy
+
+ENV SQUID_VERSION=${SQUID_VERSION}
+ENV DISTRO=${DISTRO}
+
+# Instalar dependencias y Squid (descarga dinámica según SQUID_VERSION y DISTRO)
+RUN set -eux; \
+    DEB_TAG="ubuntu-${DISTRO}"; \
+    DEB_NAME="squid_${SQUID_VERSION}-${DEB_TAG}_amd64.deb"; \
+    URL="https://github.com/cuza/squid/releases/download/${SQUID_VERSION}/${DEB_NAME}"; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends wget curl ca-certificates apt-transport-https gnupg dirmngr; \
+    wget -O "/tmp/${DEB_NAME}" "${URL}"; \
+    # Try to install; if missing deps, fix and retry
+    if ! dpkg -i "/tmp/${DEB_NAME}"; then \
+        apt-get update; apt-get install -y --no-install-recommends -f; \
+        dpkg -i "/tmp/${DEB_NAME}"; \
+    fi; \
+    rm -f "/tmp/${DEB_NAME}"; \
+    apt-get purge -y --auto-remove wget ca-certificates gnupg dirmngr; \
+    rm -rf /var/lib/apt/lists/*
 
 # Asegurar grupo/usuario proxy (Ubuntu suele usar proxy:proxy)
 RUN getent group proxy || groupadd -r proxy && \
