@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 # Build args to make squid version and distro dynamic
-ARG SQUID_VERSION=7.1
+ARG SQUID_VERSION=7.3
 ARG DISTRO=jammy
 
 ENV SQUID_VERSION=${SQUID_VERSION}
@@ -13,7 +13,8 @@ RUN set -eux; \
     DEB_NAME="squid_${SQUID_VERSION}-${DEB_TAG}_amd64.deb"; \
     URL="https://github.com/cuza/squid/releases/download/${SQUID_VERSION}/${DEB_NAME}"; \
     apt-get update; \
-    apt-get install -y --no-install-recommends wget curl ca-certificates apt-transport-https gnupg dirmngr; \
+    apt-get install -y --no-install-recommends wget curl ca-certificates apt-transport-https python3 python3-pip git gnupg dirmngr; \
+    update-ca-certificates; \
     wget -O "/tmp/${DEB_NAME}" "${URL}"; \
     # Try to install; if missing deps, fix and retry
     if ! dpkg -i "/tmp/${DEB_NAME}"; then \
@@ -21,7 +22,6 @@ RUN set -eux; \
         dpkg -i "/tmp/${DEB_NAME}"; \
     fi; \
     rm -f "/tmp/${DEB_NAME}"; \
-    apt-get purge -y --auto-remove wget ca-certificates gnupg dirmngr; \
     rm -rf /var/lib/apt/lists/*
 
 # Asegurar grupo/usuario proxy (Ubuntu suele usar proxy:proxy)
@@ -37,6 +37,10 @@ RUN mkdir -p /var/log/squid /var/spool/squid /var/run/squid && \
 # Entrypoint que corrige permisos/inicializa cache en arranque
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+RUN git clone https://github.com/kaelthasmanu/SquidStats
+
+RUN pip3 install -r ./SquidStats/requirements.txt 
 
 EXPOSE 3128
 ENTRYPOINT ["/entrypoint.sh"]
