@@ -11,6 +11,7 @@ services:
     container_name: squid_proxy
     ports:
       - "3128:3128"
+      - "80:5000"
     volumes:
       - ./squid_logs:/var/log/squid        # añade :Z si usas SELinux
       - ./squid.conf:/etc/squid/squid.conf
