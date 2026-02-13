@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 # Build args to make squid version and distro dynamic
-ARG SQUID_VERSION=7.3
+ARG SQUID_VERSION=7.4
 ARG DISTRO=jammy
 
 ENV SQUID_VERSION=${SQUID_VERSION}
