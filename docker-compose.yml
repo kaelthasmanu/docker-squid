@@ -13,8 +13,11 @@ services:
       - "3128:3128"
       - "80:5000"
     volumes:
-      - ./squid_logs:/var/log/squid        # añade :Z si usas SELinux
+      - ./squid_logs:/var/log/squid
       - ./squid.conf:/etc/squid/squid.conf
+      - ./ssl_certs:/etc/ssl/squid_certs
+      #- /etc/squid/squid.conf:/etc/squid/squid.conf
+      #- /etc/squid/squid.d:/etc/squid/squid.d  # Config modular
     restart: unless-stopped
 
   #php-app:
