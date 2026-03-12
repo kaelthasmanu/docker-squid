@@ -47,6 +47,22 @@ Notas importantes
 - Por seguridad/compactación, el `Dockerfile` instala dependencias temporales (wget, gnupg, etc.), instala el .deb y luego las purga para reducir tamaño.
 - El `Dockerfile` crea un usuario/grupo `proxy` y carpetas persistentes. En runtime `docker-compose.yml` monta `./squid_logs` y `./squid_cache` para persistencia.
 
+## Certificados SSL Bump (CA raíz)
+Para que el navegador confíe en los certificados “dinámicos” que Squid genera al interceptar HTTPS debes instalar la CA raíz que has creado para el proxy, no los certificados intermedios ni los que se generan para cada host.
+
+En tu contenedor se crean tres ficheros:
+
+| Fichero | Contenido | Uso para el navegador |
+|---------|-----------|-----------------------|
+| squid-ca-cert.pem | certificado X.509 en formato PEM | no lo importa directamente |
+| squidCA.pem | PEM combinado (certificado + clave) usado por Squid | no se importa |
+| squid.der | certificado raíz convertido a DER | ✅ éste es el que hay que importar |
+
+Así que lo que debes exportar y distribuir a los equipos clientes es el fichero `squid.der` (o cualquiera de los PEM convertido a DER por ti); en Firefox/Chrome/Edge lo pones en “Autoridades” y marcas “confiar para identificar sitios web”.
+
+Una vez instalado ese CA raíz, el navegador aceptará sin avisos los certificados TLS que Squid genere dinámicamente para cada sitio.
+
+
 Archivo `.dockerignore` recomendado
 
 ```
