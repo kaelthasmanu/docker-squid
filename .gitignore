@@ -2,6 +2,7 @@
 node_modules/
 squid_cache/
 squid_logs/
+ssl_certs/
 
 # Ignore logs
 *.log
