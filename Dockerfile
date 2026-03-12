@@ -29,8 +29,8 @@ RUN getent group proxy || groupadd -r proxy && \
     id proxy || useradd -r -g proxy -s /usr/sbin/nologin -d /var/spool/squid proxy
 
 # Crear rutas básicas (el entrypoint ajustará permisos en runtime)
-RUN mkdir -p /var/log/squid /var/spool/squid /var/run/squid && \
-    chown -R proxy:proxy /var/log/squid /var/spool/squid /var/run/squid
+RUN mkdir -p /var/log/squid /var/spool/squid /var/run/squid /var/lib/squid /etc/squid/reglas && \
+    chown -R proxy:proxy /var/log/squid /var/spool/squid /var/run/squid /var/lib/squid
 
 # COPY squid.conf /etc/squid/squid.conf  # ya lo montas por volumen
 

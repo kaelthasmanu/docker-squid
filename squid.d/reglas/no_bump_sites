@@ -1,0 +1,5 @@
+# Lista de sitios a los que NO se les hará SSL Bump (splice)
+# Agregar un dominio por línea, ejemplo:
+# .ejemplo.com
+# .banco.com
+# .sitioseguro.org
