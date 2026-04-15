@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  squid:
+    build:
+      context: .
+      # You can pass build args here to change the squid package version and distro
+      # args:
+      #   SQUID_VERSION: "7.1"
+      #   DISTRO: "jammy"
+    container_name: squid_proxy
+    ports:
+      - "3128:3128"
+      - "3129:3129"
+      - "80:5000"
+    volumes:
+      - ./squid_logs:/var/log/squid
+      - /etc/squid/squid.conf:/etc/squid/squid.conf
+      - ./ssl_certs:/etc/ssl/squid_certs
+      - /etc/squid/squid.d:/etc/squid/squid.d  # Config modular
+      - /etc/squid/usuarios_bloqueados.txt:/etc/squid/usuarios_bloqueados.txt
+      #- /etc/squid/squid.conf:/etc/squid/squid.conf
+    restart: unless-stopped
+
+  #php-app:
+    #build: ./sqstats
+    #container_name: php_app
+    #ports:
+      #- "80:80"
+    #restart: unless-stopped
