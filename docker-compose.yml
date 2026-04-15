@@ -27,6 +27,8 @@ services:
     networks:
       squidnet:
         ipv4_address: 192.168.100.11 
+    ports:
+      - "3129:3128"
     volumes:
       - ./logs/backend1:/var/log/squid
       - ./backend1/squid.conf:/etc/squid/squid.conf:ro
@@ -39,6 +41,8 @@ services:
     networks:
       squidnet:
         ipv4_address: 192.168.100.12  
+    ports:
+      - "3130:3128"
     volumes:
       - ./logs/backend2:/var/log/squid
       - ./backend2/squid.conf:/etc/squid/squid.conf:ro
@@ -51,6 +55,8 @@ services:
     networks:
       squidnet:
         ipv4_address: 192.168.100.13  
+    ports:
+      - "3131:3128"
     volumes:
       - ./logs/backend3:/var/log/squid
       - ./backend3/squid.conf:/etc/squid/squid.conf:ro
