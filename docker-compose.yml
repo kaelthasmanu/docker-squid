@@ -6,49 +6,51 @@ services:
     container_name: squid_balancing
     networks:
       squidnet:
-        ipv4_address: 192.168.0.10
+        ipv4_address: 192.168.100.10  
     ports:
       - "3128:3128"
     volumes:
       - ./logs/balanceador:/var/log/squid
       - ./balanceador/squid.conf:/etc/squid/squid.conf:ro
       - ./balanceador/squid.d:/etc/squid/squid.d:ro
-      - ./ssl_certs:/etc/ssl/squid_certs
-      - /etc/squid/usuarios_bloqueados.txt:/etc/squid/usuarios_bloqueados.txt
+      - ./ssl_certs:/etc/ssl/squid_certs:ro
+      - /etc/squid/usuarios_bloqueados.txt:/etc/squid/usuarios_bloqueados.txt:ro
     restart: unless-stopped
     depends_on:
       - squid-backend1
       - squid-backend2
       - squid-backend3
+
   squid-backend1:
     build: .
     container_name: squid_backend1
     networks:
       squidnet:
-        ipv4_address: 192.168.0.11  # IP interna para el balanceador
-    # NO publicar puertos a host (solo red interna)
+        ipv4_address: 192.168.100.11 
     volumes:
       - ./logs/backend1:/var/log/squid
       - ./backend1/squid.conf:/etc/squid/squid.conf:ro
       - ./backend1/squid.d:/etc/squid/squid.d:ro
     restart: unless-stopped
+
   squid-backend2:
     build: .
     container_name: squid_backend2
     networks:
       squidnet:
-        ipv4_address: 192.168.0.12
+        ipv4_address: 192.168.100.12  
     volumes:
       - ./logs/backend2:/var/log/squid
       - ./backend2/squid.conf:/etc/squid/squid.conf:ro
       - ./backend2/squid.d:/etc/squid/squid.d:ro
     restart: unless-stopped
+
   squid-backend3:
     build: .
     container_name: squid_backend3
     networks:
       squidnet:
-        ipv4_address: 192.168.0.13
+        ipv4_address: 192.168.100.13  
     volumes:
       - ./logs/backend3:/var/log/squid
       - ./backend3/squid.conf:/etc/squid/squid.conf:ro
@@ -57,5 +59,8 @@ services:
 
 networks:
   squidnet:
-    external: true
-    name: squid-macvlan
+    driver: bridge  
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24  # NUEVA subred
+          gateway: 192.168.100.1     # Gateway automático

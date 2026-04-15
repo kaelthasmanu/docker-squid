@@ -38,9 +38,9 @@ RUN mkdir -p /var/log/squid /var/spool/squid /var/run/squid /var/lib/squid /etc/
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-RUN git clone https://github.com/kaelthasmanu/SquidStats
+# RUN git clone https://github.com/kaelthasmanu/SquidStats
 
-RUN pip3 install -r ./SquidStats/requirements.txt 
+# RUN pip3 install -r ./SquidStats/requirements.txt 
 
 EXPOSE 3128
 ENTRYPOINT ["/entrypoint.sh"]
