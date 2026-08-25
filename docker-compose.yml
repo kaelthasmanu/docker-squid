@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   squid:
     build:
@@ -9,10 +7,14 @@ services:
       #   SQUID_VERSION: "7.1"
       #   DISTRO: "jammy"
     container_name: squid_proxy
+    depends_on:
+      - squid-parent
+    networks:
+      proxy_net:
+        ipv4_address: 172.30.0.2
     ports:
       - "3128:3128"
-      - "3129:3129"
-      - "80:5000"
+      #- "80:5000"
     volumes:
       - ./squid_logs:/var/log/squid
       - ./squid.conf:/etc/squid/squid.conf
@@ -22,9 +24,31 @@ services:
       #- /etc/squid/squid.d:/etc/squid/squid.d  # Config modular
     restart: unless-stopped
 
+  squid-parent:
+    build:
+      context: .
+    # Reutiliza la misma imagen de Squid; solo cambia la configuración.
+    container_name: squid_parent_proxy
+    networks:
+      proxy_net:
+        ipv4_address: 172.30.0.3
+    expose:
+      - "3128"
+    volumes:
+      - ./squid_parent_logs:/var/log/squid
+      - ./squid-parent.conf:/etc/squid/squid.conf
+    restart: unless-stopped
+
   #php-app:
     #build: ./sqstats
     #container_name: php_app
     #ports:
       #- "80:80"
     #restart: unless-stopped
+
+networks:
+  proxy_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
