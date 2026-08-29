@@ -18,6 +18,7 @@ services:
       - ./squid.conf:/etc/squid/squid.conf
       - ./ssl_certs:/etc/ssl/squid_certs
       - ./squid.d/reglas:/etc/squid/reglas
+      - ./HTTP.keytab:/etc/squid/HTTP.keytab
       #- /etc/squid/squid.conf:/etc/squid/squid.conf
       #- /etc/squid/squid.d:/etc/squid/squid.d  # Config modular
     restart: unless-stopped
