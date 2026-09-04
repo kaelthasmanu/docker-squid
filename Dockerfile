@@ -13,7 +13,7 @@ RUN set -eux; \
     DEB_NAME="squid_${SQUID_VERSION}-${DEB_TAG}_amd64.deb"; \
     URL="https://github.com/cuza/squid/releases/download/${SQUID_VERSION}/${DEB_NAME}"; \
     apt-get update; \
-    apt-get install -y --no-install-recommends wget curl ca-certificates apt-transport-https python3 python3-pip git gnupg dirmngr; \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends wget curl ca-certificates apt-transport-https python3 python3-pip git gnupg dirmngr krb5-user libgssapi-krb5-2; \
     update-ca-certificates; \
     wget -O "/tmp/${DEB_NAME}" "${URL}"; \
     # Try to install; if missing deps, fix and retry
@@ -32,15 +32,15 @@ RUN getent group proxy || groupadd -r proxy && \
 RUN mkdir -p /var/log/squid /var/spool/squid /var/run/squid /var/lib/squid /etc/squid/reglas && \
     chown -R proxy:proxy /var/log/squid /var/spool/squid /var/run/squid /var/lib/squid
 
-# COPY squid.conf /etc/squid/squid.conf  # ya lo montas por volumen
+COPY krb5.conf /etc/krb5.conf
 
 # Entrypoint que corrige permisos/inicializa cache en arranque
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-RUN git clone https://github.com/kaelthasmanu/SquidStats
+#RUN git clone https://github.com/kaelthasmanu/SquidStats
 
-RUN pip3 install -r ./SquidStats/requirements.txt 
+#RUN pip3 install -r ./SquidStats/requirements.txt
 
 EXPOSE 3128
 ENTRYPOINT ["/entrypoint.sh"]
