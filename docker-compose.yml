@@ -8,6 +8,7 @@ services:
       # args:
       #   SQUID_VERSION: "7.1"
       #   DISTRO: "jammy"
+    image: nosslbump
     container_name: squid_proxy
     ports:
       - "3128:3128"
