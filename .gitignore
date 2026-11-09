@@ -3,6 +3,7 @@ node_modules/
 squid_cache/
 squid_logs/
 ssl_certs/
+chrome_config/
 
 # Ignore logs
 *.log
