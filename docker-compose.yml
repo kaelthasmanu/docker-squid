@@ -1,29 +1,67 @@
-version: '3.8'
 
 services:
-  squid:
-    build:
-      context: .
-      # You can pass build args here to change the squid package version and distro
-      # args:
-      #   SQUID_VERSION: "7.1"
-      #   DISTRO: "jammy"
-    container_name: squid_proxy
-    ports:
-      - "3128:3128"
-      - "3129:3129"
-      - "80:5000"
+  chrome:
+    image: lscr.io/linuxserver/chrome:latest
+    container_name: chrome
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - CHROME_CLI=--proxy-server=http://squid:3128 --disable-quic
+
     volumes:
-      - ./squid_logs:/var/log/squid
-      - ./squid.conf:/etc/squid/squid.conf
-      - ./ssl_certs:/etc/ssl/squid_certs
-      - /etc/squid/squid.d:/etc/squid/squid.d  # Config modular
-      #- /etc/squid/squid.conf:/etc/squid/squid.conf
+      - ./chrome_config:/config
+
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+
+    shm_size: "1gb"
+
+    networks:
+      - proxy_internal
+      - proxy_access
+
+    #depends_on:
+      #- squid
+
     restart: unless-stopped
 
-  #php-app:
-    #build: ./sqstats
-    #container_name: php_app
-    #ports:
-      #- "80:80"
-    #restart: unless-stopped
+  # squid:
+  #   build:
+  #     context: .
+  #     args:
+  #       SQUID_VERSION: "7.1"
+  #       DISTRO: "jammy"
+
+  #   user: "0:0"
+  #   container_name: squid_proxy
+
+  #   ports:
+  #     - "3128:3128"
+  #     - "3129:3129"
+  #     - "80:5000"
+
+  #   volumes:
+  #     - ./squid_logs:/var/log/squid
+  #     - ./squid.conf:/etc/squid/squid.conf
+  #     - ./ssl_certs:/etc/ssl/squid_certs
+  #     - ./squid.d:/etc/squid/squid.d
+
+  #   networks:
+  #     - proxy_internal
+  #     - proxy_external
+
+  #   restart: unless-stopped
+
+networks:
+  proxy_internal:
+    driver: bridge
+    internal: true
+
+  proxy_access:
+    driver: bridge
+
+  proxy_external:
+    driver: bridge
